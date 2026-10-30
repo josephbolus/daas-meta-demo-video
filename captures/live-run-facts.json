@@ -1,0 +1,67 @@
+{
+  "run_id": "e76b2c82e7f3",
+  "attempt": 1,
+  "status": "done",
+  "mode": "live",
+  "judge_mode": true,
+  "overall": "pass",
+  "tests_before": 24,
+  "tests_after": 25,
+  "tests_delta": 1,
+  "total_elapsed_ms": 34237,
+  "cost_total_usd_est": 0.014064,
+  "cost_calls": 4,
+  "cost_method": "char_estimate",
+  "cost_per_role_models": {
+    "TRIAGE": [
+      "muse-wonder-1.0"
+    ],
+    "PLANNER": [
+      "muse-wonder-1.0"
+    ],
+    "CODER": [
+      "muse-wonder-1.0"
+    ],
+    "REVIEWER": [
+      "muse-wonder-1.0"
+    ]
+  },
+  "stages": [
+    {
+      "stage": "guardrail",
+      "status": "pass",
+      "elapsed_ms": 54
+    },
+    {
+      "stage": "triage",
+      "status": "pass",
+      "elapsed_ms": 15457
+    },
+    {
+      "stage": "plan",
+      "status": "pass",
+      "elapsed_ms": 20877
+    },
+    {
+      "stage": "code",
+      "status": "pass",
+      "elapsed_ms": 28686
+    },
+    {
+      "stage": "tests",
+      "status": "pass",
+      "elapsed_ms": 28801
+    },
+    {
+      "stage": "review",
+      "status": "pass",
+      "elapsed_ms": 34236
+    },
+    {
+      "stage": "done",
+      "status": "pass",
+      "elapsed_ms": 34237
+    }
+  ],
+  "error": null
+}

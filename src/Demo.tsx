@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill,
+  Audio,
   Img,
   Sequence,
   interpolate,
@@ -8,14 +9,18 @@ import {
   useCurrentFrame,
 } from 'remotion';
 
-// DevOps as a Service — Meta Global AI Developer Hackathon demo.
-// 1920x1080, 30fps, 165s (2:45), captioned, no voiceover.
-// Footage: real captures of the v3 demo console (Mock Judge Mode run of the
-// Tier 1 issue + a real guardrail escalation), replayed through the console's
-// own rendering code from the run's saved snapshot. Drawn scenes (title,
-// close) use the v3 design language. Every number shown is either read off a
-// console capture or one of the verified full-bench figures (12/12, +42,
-// $0.0326 per passed issue, all roles muse-wonder-1.0).
+// DevOps as a Service — Meta Global AI Developer Hackathon demo, v2.
+// 1920x1080, 30fps, 165s (2:45), captioned, WITH narration (per-beat TTS
+// clips in public/audio/, placed at their beat timestamps).
+// Footage: real captures of the v3 demo console — the main walkthrough is
+// a genuine LIVE Judge Mode run (run e76b2c82e7f3, Tier 1, all roles
+// muse-wonder-1.0, PASS, tests 24 -> 25, 34.2s, est. $0.014064) plus a
+// real guardrail escalation, replayed through the console's own rendering
+// code from the run's saved snapshot (captures/snapshot-tier1-live.json).
+// Drawn scenes (title, close) use the v3 design language. Every number
+// shown or spoken is either read off a console capture or one of the
+// verified full-bench figures (12/12, +42, $0.0326 per passed issue,
+// all roles muse-wonder-1.0).
 
 const FPS = 30;
 const sec = (s: number) => Math.round(s * FPS);
@@ -76,6 +81,39 @@ const Caption: React.FC<{children: React.ReactNode}> = ({children}) => {
   );
 };
 
+// Small pill marking the live-model segment, in the v3 design language.
+const LiveBadge: React.FC = () => (
+  <div
+    style={{
+      position: 'absolute',
+      top: 26,
+      right: 28,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 9,
+      background: 'rgba(255,255,255,0.96)',
+      border: `1px solid ${LINE}`,
+      borderRadius: 999,
+      padding: '8px 16px',
+      boxShadow: '0 4px 16px rgba(21,27,40,0.08)',
+      pointerEvents: 'none',
+    }}
+  >
+    <span
+      style={{
+        width: 9,
+        height: 9,
+        borderRadius: '50%',
+        background: GREEN,
+        display: 'inline-block',
+      }}
+    />
+    <span style={{fontSize: 19, fontWeight: 650, color: BODY, letterSpacing: 0.4}}>
+      Live run · muse-wonder-1.0
+    </span>
+  </div>
+);
+
 // ------------------------------------------------------------- shot scenes
 
 // A console capture shown full-bleed with a slow zoom toward focus point
@@ -89,7 +127,8 @@ const Shot: React.FC<{
   fx: number;
   fy: number;
   captions: Array<[number, number, string]>;
-}> = ({img, dur, z0, z1, fx, fy, captions}) => {
+  live?: boolean;
+}> = ({img, dur, z0, z1, fx, fy, captions, live}) => {
   const frame = useCurrentFrame();
   const total = sec(dur);
   const fade = interpolate(
@@ -121,6 +160,7 @@ const Shot: React.FC<{
           <Caption>{text}</Caption>
         </Sequence>
       ))}
+      {live ? <LiveBadge /> : null}
     </AbsoluteFill>
   );
 };
@@ -352,6 +392,28 @@ const CloseScene: React.FC = () => (
   </FadeWrap>
 );
 
+// -------------------------------------------------------------- narration
+
+// Per-beat TTS clips (narration-script-v2.md), each placed at its beat's
+// timestamp. Every clip was measured shorter than its beat window, so
+// beats never overlap.
+const NARRATION: Array<[number, string]> = [
+  [0, 'beat-01'],
+  [9, 'beat-02'],
+  [20, 'beat-03'],
+  [30, 'beat-04'],
+  [41, 'beat-05'],
+  [52, 'beat-06'],
+  [62, 'beat-07'],
+  [72, 'beat-08'],
+  [85, 'beat-09'],
+  [97, 'beat-10'],
+  [110, 'beat-11'],
+  [122, 'beat-12'],
+  [133, 'beat-13'],
+  [145, 'beat-14'],
+];
+
 // ------------------------------------------------------------------- main
 
 export const Demo: React.FC = () => {
@@ -380,12 +442,13 @@ export const Demo: React.FC = () => {
         <Shot
           img="idle.png"
           dur={10}
+          live
           z0={1.14}
           z1={1.48}
           fx={455}
           fy={700}
           captions={[
-            [0, 10, 'One issue in. Watch what happens — with no human touching it.'],
+            [0, 10, 'One issue in — and this run is live. Watch what happens, with no human touching it.'],
           ]}
         />
       </Sequence>
@@ -395,6 +458,7 @@ export const Demo: React.FC = () => {
         <Shot
           img="run-a-plan.png"
           dur={22}
+          live
           z0={1.02}
           z1={1.12}
           fx={1100}
@@ -419,6 +483,7 @@ export const Demo: React.FC = () => {
         <Shot
           img="run-b-tests.png"
           dur={20}
+          live
           z0={1.05}
           z1={1.17}
           fx={1150}
@@ -439,6 +504,7 @@ export const Demo: React.FC = () => {
         <Shot
           img="run-c-review.png"
           dur={13}
+          live
           z0={1.05}
           z1={1.14}
           fx={1150}
@@ -458,16 +524,17 @@ export const Demo: React.FC = () => {
         <Shot
           img="results.png"
           dur={25}
+          live
           z0={1.03}
           z1={1.12}
           fx={1140}
           fy={470}
           captions={[
-            [0, 12, 'One issue in — one reviewed, tested pull request out.'],
+            [0, 12, 'One issue in — one reviewed, tested pull request out. 34.2 seconds, end to end.'],
             [
               12,
               25,
-              'Tests green, diff limited to the plan’s scope — and this same pattern, live, opened PR #16, #17 and #18.',
+              'Tests green at 24 → 25, est. API cost $0.01 on the card — and this same pattern, live, opened PR #16, #17 and #18.',
             ],
           ]}
         />
@@ -520,6 +587,13 @@ export const Demo: React.FC = () => {
       <Sequence from={sec(145)} durationInFrames={sec(20)}>
         <CloseScene />
       </Sequence>
+
+      {/* Narration track — one clip per beat, at its timestamp */}
+      {NARRATION.map(([at, file]) => (
+        <Sequence key={file} from={sec(at)}>
+          <Audio src={staticFile(`audio/${file}.mp3`)} />
+        </Sequence>
+      ))}
     </AbsoluteFill>
   );
 };

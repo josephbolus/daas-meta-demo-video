@@ -1,6 +1,8 @@
 // Capture real v3 console states via CDP (chrome-headless-shell).
-// Replays a REAL completed mock Judge Mode run's saved snapshot through the
-// page's own renderEvent/markRunning/poll-terminal code paths — the exact
+// v2: replays a REAL completed LIVE Judge Mode run's saved snapshot
+// (run e76b2c82e7f3 — all-frontier muse-wonder-1.0, Tier 1, tests
+// 24 -> 25, pass; see captures/live-run-facts.json) through the page's
+// own renderEvent/markRunning/poll-terminal code paths — the exact
 // states the 500ms polling produced — and screenshots each one.
 import {spawn} from 'node:child_process';
 import {readFileSync, writeFileSync} from 'node:fs';
@@ -9,7 +11,7 @@ const CHROME =
   '/home/hatch/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell';
 const PORT = 9333;
 const OUT = new URL('./captures/', import.meta.url).pathname;
-const SNAP = JSON.parse(readFileSync(OUT + 'snapshot-tier1-mock.json', 'utf8'));
+const SNAP = JSON.parse(readFileSync(OUT + 'snapshot-tier1-live.json', 'utf8'));
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
